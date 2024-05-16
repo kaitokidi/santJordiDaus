@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Gallery</title>
+
+    <style>
+
+	
+#scoreDisplay {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* A more readable and modern font */
+  font-size: 18px; /* Slightly larger font size for better visibility */
+  line-height: 1.5; /* Adequate line spacing for readability */
+  color: #4A4A4A; /* A softer color than pure black for text */
+  background-color: #F0F0F0; /* A subtle background color */
+  border-left: 5px solid #007bff; /* A blue accent border on the left */
+  padding: 12px 20px; /* Ample padding for a spacious layout */
+  margin-bottom: 20px; /* Space below the div to separate it from subsequent content */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* A subtle shadow for depth */
+  min-height: 72px; /* Ensure it occupies the space of two lines, adjust based on your font size and line height */
+  display: flex; /* Use flexbox for vertical centering */
+  align-items: center; /* Align text vertically in the middle */
+  justify-content: center; /* Center text horizontally */
+  text-align: center; /* Ensure text is centered if it wraps to a new line */
+  border-radius: 8px; /* Rounded corners for a modern look */
+}
+
+
+body {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  margin: 20px;
+  background-color:  #FFFFE0;
+}
+
+.image-gallery {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.small-images {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 images per row */
+  grid-gap: 2px; /* Reduced gap between images */
+  width: 80%; /* Adjust the width as needed to control image size */
+  margin-bottom: 20px; /* Space between the small images and the big image */
+}
+
+.image-container {
+  cursor: pointer;
+  overflow: hidden;
+  aspect-ratio: 1 / 1; /* Keeps the containers square */
+  padding-top: 15%; /* Reduced padding to decrease space and adjust image size */
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+button {
+  margin-top: 10px;
+}
+
+
+@keyframes bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+.image-container.selected {
+  border: 3px solid #FFD700; 
+  animation: bounce 0.5s ease;
+  box-shadow: 0 0 0 20px #FFD700 inset; /* Simulates a border that fits tightly */
+}
+
+ .container {
+    display: grid;
+    gap: 8px;
+    padding: 8px;
+  }
+  .column {
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #ccc;
+  }
+  /* Initial grid setup */
+  .container {
+    grid-template-columns: repeat(5, 1fr); 
+  }
+  .highlight {
+  background-color: #ffff99; /* Light yellow background */
+}
+
+
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-family: 'Arial', sans-serif;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
+}
+
+button:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+button:disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+}
+
+#imgpuntuacio {
+	max-width: 75vw; 
+  max-height: 100vh; 
+  object-fit: contain;
+   margin-top: 30px;
+}
+
+#debug {
+	max-width: 75vw; 
+  max-height: 100vh; 
+  object-fit: contain;
+   margin-top: 30px;
+}
+
+#dracCard{
+  width: 30%; 
+  height: auto;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+#dracCard img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.image-container img {
+  border-radius: 15px;
+}
+
+@keyframes bump {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5); 
+  }
+}
+
+.player-setup {
+  margin-bottom: 20px;
+}
+
+#scoreboard, #scoreboard th, #scoreboard td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  padding: 8px;
+  text-align: left;
+}
+
+#scoreboard {
+
+  margin-top: 30px;
+  width: 100%;
+  margin-bottom: 1px;
+}
+
+.highlight {
+  background-color: #ffff99;
+}
+
+/* The Modal (background) */
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 10; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.4);
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: 50% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    text-align: center;
+}
+
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+.close-button-win {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-button-win:hover,
+.close-button-win:hover,
+.close-button-win:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+    </style>
+</head>
+<body>
+
+
+<div id="scoreDisplay"> Bon St. Jordi! </div>
+
+<div class="image-gallery">
+    <div class="small-images">
+        <div class="image-container" id="image1" onclick="DauClicat(this);">
+            <img alt="Small Image">
+        </div>
+        <div class="image-container" id="image2" onclick="DauClicat(this);">
+            <img alt="Small Image">
+        </div>
+        <div class="image-container" id="image3" onclick="DauClicat(this);">
+            <img alt="Small Image">
+        </div>
+        <div class="image-container" id="image4" onclick="DauClicat(this);">
+            <img alt="Small Image">
+        </div>
+        <div class="image-container" id="image5" onclick="DauClicat(this);">
+            <img alt="Small Image">
+        </div>
+        <div class="image-container" id="image6" onclick="DauClicat(this);">
+            <img alt="Small Image">
+        </div>
+        <div class="image-container" id="image7" onclick="DauClicat(this);">
+            <img alt="Small Image">
+        </div>
+        <div class="image-container" id="image8" onclick="DauClicat(this);">
+            <img alt="Small Image">
+        </div>
+    </div>
+	<div id="dracsEnemics">  </div>
+	<div class="dracCard" id="dracCard">
+		<img alt="Big Image">
+	</div>	
+	<!--button onclick="OnBotoRollDaus()" id="rollDiceButton">Tira Daus Marcats</button-->
+<div id="debug"> ... </div>
+<!--button onclick="OnButtonRollAll()" id="rollAllDice">Tira TOTS els daus</button-->
+
+<button onclick="newRound()" id="newRoundButton">Ronda Nova</button>
+</br>
+</br>
+
+<table id="scoreboard">
+  <tr>
+    <th>Noms</th>
+    <th>Puntuació</th>
+  </tr>
+</table>
+
+<div class="player-setup">
+  <input type="text" id="playerNameInput" placeholder="Posa el teu nom">
+  <button onclick="addPlayer()">Afegir Jugador/a</button>
+  <button onclick="addPlayerRand()">Autogenerar</button>
+</div>
+
+
+<div> 
+<p> 
+L'objectiu és arribar a <span id ="winScore"></span> abans que la resta.</br> 
+ </br>
+Jugueu per Rondes.  </br>
+A cada Ronda cada jugador té el seu torn. </br>
+-Comença tirant tots els daus amb el botó [RONDA NOVA] </br>
+-Clica qualsevol dau per tornar-lo a tirar </br>
+--Els núvols de pluja no es poden tornar a tirar. </br>
+En qualsevol moment el jugador pot plantar-lse, puntuant els daus que tingui a la taula. </br>
+Si no es pot derrotar el drac perquè hi ha massa pluja puntua només els punts que valia el drac. </br >
+ </br>
+PUNTUACIÓ de daus:
+<p id ="punts"></p>
+ </br>
+DRAC: </br>
+Cada torn apareixerà un nombre sobre l'imatge del drac.</br>
+Per puntuar algun punt hauràs de tenir tants o més daus amb armes com aquest nombre.</br> 
+Si tens els daus necessaris, puntuaràs el doble d'aquest nombre, més el que et donguin els altres daus.
+
+Versions actualitzades: www.somepenguinsgames.com/Stjordi
+</p> 
+</div>
+
+<div id="playerTurnPopup" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2 id="playerTurnText">Torn de:  <span id="playerNameInPopup">Player's</span> !</h2>
+    </div>
+</div>
+
+<div id="WinPopup" class="modal">
+    <div class="modal-content">
+        <span class="close-button-win">&times;</span>
+        <h2 id="playerText"><span id="playerNameWin">Player's</span> ha derrotat el drac! </h2>
+    </div>
+</div>
+
+</div>
+<script> 
+
+
+String.prototype.hashCode = function() {
+  var hash = 0,
+    i, chr;
+  if (this.length === 0) return hash;
+  for (i = 0; i < this.length; i++) {
+    chr = this.charCodeAt(i);
+    hash = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+}
+
+//const defaultImage = "daus/calav.png";
+const defaultImage = "https://lh3.googleusercontent.com/pw/AP1GczMT6PAWZhS3RG-jTIXTGxAnM2tYiEFnr6bs_kyQYy-gwI9GgzW3JRkYySfUGOKPeTuRSV3Xcdaojv09QkN7NPWohI67b6InOBoP83GSXxJNsgWWYn0ReXT83td8KCaJ4AVS-3yzP_UogZ2g8QShaK6KVg=w1280-h1280-s-no?authuser=0"; //backs
+
+const dracCard = 'https://lh3.googleusercontent.com/pw/AP1GczPKlNJAFBhLClvczAX7gp8af4nugG9vTchDxkPf39NZelIZj1qIS7DJHvVAsyGhyeoPU5hkgkt72fFKYjXO2_Q8Jfloi57WbBrza_1n5ibnKg15VYM9ENDmMuhmhlvgdqLG2VXLfZkWQVoEZy5jfU4ynw=w1280-h1280-s-no?authuser=0'; //drac
+
+const d1 = 'https://lh3.googleusercontent.com/pw/AP1GczMG0C0GLnj_V2BdZEldR5HNmLb0RwdZ27ffh292L_wwjSnYg-PVr-MJJrONsQGS7g5Xn4znD44NQwzJykQOFPTKYWVPL4o0wDXX2GLyW2_GB2gahRiaFQJfsm0quMy7mVGLr8IZLjFiyU4WtM9TvJzUeA=w1280-h1280-s-no?authuser=0'; //rose
+const d2 = 'https://lh3.googleusercontent.com/pw/AP1GczO-uGz7lIvRE-r53Puz5373qt9iWtPwfLWQyWSV2xyA_H9TiZxP57DEm3ZSSqoclrv3hSF38yU7KS-xDKCBRPF_Ouu40sGFg63tRlwk4JJfLFHwMGmgSVjrIFsJ7YskJd745LfVyinvs2XME0omZwNZpg=w1280-h1280-s-no?authuser=0'; //cloud
+const d3 = 'https://lh3.googleusercontent.com/pw/AP1GczP3up3AuzPkKkkHbLO4BmZ44P-W0soFKpgVF9e5liglWERFadG3KtA8jA695rLXKrBZK4cnVUa2aD4U09DXt7qWsdPPCnqGbc32s9Xv403RAlGP9FFIZPoB2Aim6pCerOLw2kXcklN_TxUeQrNpZ9FskQ=w1280-h1280-s-no?authuser=0';//book
+const d4 = 'https://lh3.googleusercontent.com/pw/AP1GczOXwcGKOyuHVUnKx0fEe4Cm-3KJ8e8A-ODRQGiuu1XfKbsMN3QwevmaxFKhbmWCg1lVIs8VjiZcmv5wcB3lF-SlqAjnxf6anP_5Xwc1cfQqJNyQA2LTHHJFgfg1ML_FEF3TTeYpOOdfx7A3WFCDGOGRjw=w1280-h1280-s-no?authuser=0';//arma1
+const d5 = 'https://lh3.googleusercontent.com/pw/AP1GczPiRhkUqs_D0O35k5IXFxjvakvQvQKQVIQ8lUKOND_o1_4jbkpvntWAasti3OhArP6-ug5i_aj9q-73tKNr9wXX-JZMq0KUyLAtGGTlQVAs_BSkhSK-AGeTrmlf9DeWm5-7lsoH-9u_IYQLEtg8_pjKQA=w1280-h1280-s-no?authuser=0';//arma2
+const d6 = 'https://lh3.googleusercontent.com/pw/AP1GczP5fgPrn29rpnFvvIQsGwln5NG0ooSB15K-688GvyrrXfLXIGhOe0uiC5997xX8a_kxJwGCAqvtJV9BIsCBjwXm9iTLmWlZvQTbwl_OcMIHjxkEgGx8xzw-G11Nuc_wkZX6YhMsF_p6ZzhulKBWjHUK4w=w1280-h1280-s-no?authuser=0';//cor
+
+
+
+/*
+*/
+
+
+const rosa = 0;
+const cloud = 1;
+const llibre = 2;
+const arma1 = 3;
+const arma2 = 4;
+const cor = 5;
+
+const namesMap = {
+  0: 'rosa',
+  1: 'cloud',
+  2: 'llibre',
+  3: 'arma1',
+  4: 'arma2',
+  5: 'cor'
+};
+
+const kUrlsDauIndexades = [d1,d2,d3,d4,d5,d6];
+ 
+const kDiceIndexMap = {
+  [d1]: 0,
+  [d2]: 1,
+  [d3]: 2,
+  [d4]: 3,
+  [d5]: 4,
+  [d6]: 5,
+  [defaultImage]: -1
+};
+
+const WIN_SCORE = 60;
+
+const PUNTUACIO_CORS = 1
+const PUNTUACIO_ROSA_LLIBRE = [0,4,8,10,12]
+const PUNTUACIO_GRUPS = [0,0,1,2,4,8,16,32,64]
+	
+let rollingImages = false;
+
+function GetFilenameFromUrl(url) {
+  return url.split('/').pop();
+}
+
+const kProbabilitatDau = [
+  {url: d1, weight: 1},{url: d2, weight: 1},{url: d3, weight: 1},{url: d4, weight: 0.5},{url:d5, weight: 0.5},{url:d6, weight: 1} ];
+  
+let mGraphicBoardObjects = []
+  
+function setImageSources() {
+  for(let i = 1; i <= 8; i++){
+    let element = document.getElementById("image" + i);
+    if (element) { 
+      mGraphicBoardObjects.push(element);
+      element.querySelector('img').src = defaultImage;
+    }
+  }
+  let card = document.getElementById("dracCard");
+  if(card){
+	cardObject = card;
+	card.querySelector('img').src = dracCard;
+  }
+  let punts = document.getElementById("punts");
+  let Spotencial = "";
+  if(PUNTUACIO_CORS > 1) Spotencial = "s";
+  punts.innerText = "Per cada cor suma "+PUNTUACIO_CORS+" punt"+Spotencial+". \nSegons quants parells Rosa+Llibre tinguis, puntua: "+PUNTUACIO_ROSA_LLIBRE[1]+
+  ", "+PUNTUACIO_ROSA_LLIBRE[2]+", "+PUNTUACIO_ROSA_LLIBRE[3]+".\nPer cada grup de daus iguals (excepte núvols) puntua: "+
+  PUNTUACIO_GRUPS[1]+", "+PUNTUACIO_GRUPS[2]+", "+PUNTUACIO_GRUPS[3]+", "+PUNTUACIO_GRUPS[4]+", "+PUNTUACIO_GRUPS[5]+", "+PUNTUACIO_GRUPS[6]+".\nA més a més, puntua el doble dels punts que necessitessis per matar el drac.";
+  let winscoreElem = document.getElementById("winScore");
+  winscoreElem.innerText = WIN_SCORE;
+}
+
+document.addEventListener('DOMContentLoaded', setImageSources);
+ 
+function WeightedRandomSelect(imageSet) {
+  let totalWeight = imageSet.reduce((sum, item) => sum + item.weight, 0);
+  let random = Math.random() * totalWeight;
+  for (let item of imageSet) {
+    if (random < item.weight) {
+      return item.url;
+    }
+    random -= item.weight;
+  }
+  return imageSet[imageSet.length - 1].url;
+}
+
+function CalculateCounts(){
+
+	let counts = [0,0,0,0,0,0];
+	document.querySelectorAll('.image-container').forEach(container => {
+		const filename = container.querySelector('img').src;
+		console.log("kDiceIndexMap:", kDiceIndexMap);
+
+		const idx = kDiceIndexMap[filename];
+		if(idx >= 0 && idx < counts.length){
+			counts[idx] += 1;
+		}
+	});
+	
+	return counts;
+}
+
+
+ 
+function DauClicat(container){
+	if(rollingImages) return;
+
+	if(container.querySelector('img').src != kUrlsDauIndexades[cloud]){
+		container.classList.toggle('selected');
+		OnBotoRollDaus();
+	}
+	else {
+		document.getElementById('debug').innerText = "No es poden canviar els dies grisos.";
+	}
+}
+
+
+function OnBotoRollDaus(){
+	if(rollingImages) return;
+
+	let selected = document.querySelectorAll('.image-container.selected');
+	if(selected.length >= 1) {		
+	
+		GenerateDies(selected, kProbabilitatDau, 6, 66);
+		selected.forEach(container => {
+			container.classList.toggle('selected');
+		});
+		
+		rollingImages = true;
+	} else {
+		document.getElementById('debug').innerText = "Has de triar un dau mínim.";
+	}
+	
+}
+
+function OnButtonRollAll(){
+	if(rollingImages) return;
+	
+	document.querySelectorAll('.image-container.selected').forEach(container => {
+    	container.classList.toggle('selected');
+    });
+	
+	//document.getElementById('dracsEnemics').innerText = Math.floor(Math.random()*4)+1;
+	const dracsEnemicsElement = document.getElementById('dracsEnemics');
+	const newValue = Math.floor(Math.random() * 4) + 1;
+	 dracsEnemicsElement.innerText = newValue;
+    dracsEnemicsElement.style.animation = 'none'; 
+    setTimeout(() => {  
+      dracsEnemicsElement.style.animation = 'bump 0.5s ease';
+    }, 10);
+	
+	let allDiceImages = document.querySelectorAll('.image-container');
+	GenerateDies(allDiceImages, kProbabilitatDau, 6, 66);
+			
+	rollingImages = true;
+}
+
+function GenerateDies(imagesSelected, randomizerImageSet, maxChanges, milisBetweenChanges) {
+
+	let counter = 0;
+	const interval = setInterval(() => {
+		if(counter >= maxChanges) { 
+			WriteCount();
+			rollingImages = false;
+			clearInterval(interval);
+		} else {
+			imagesSelected.forEach(imageElement => {			
+			  let currentImage = imageElement.querySelector('img');
+			  const imageSrc = currentImage.src;
+			  let newImage = WeightedRandomSelect(randomizerImageSet);
+			  while(newImage == imageSrc) newImage = WeightedRandomSelect(randomizerImageSet);
+			  currentImage.src = newImage;
+			});
+			counter++;
+		}
+	}, milisBetweenChanges); 
+}
+
+
+function WriteCount(){
+	
+
+	const dragonEnemies = Number(document.getElementById('dracsEnemics').innerText);
+	
+	let text = ">";
+	let explicacio = "Tenim: ";
+	
+	const contador = CalculateCounts();
+	Object.entries(contador).forEach(([id, count]) => {
+		text += namesMap[id] +","+count+" ";
+	});
+	
+	let totalScore = 0;
+	
+	const contadorArmes = contador[arma1]+contador[arma2];
+	const contadorCor = contador[cor]
+	const parellsRosaLLibre = Math.min(contador[rosa], contador[llibre]);
+	
+	
+	if(8-contador[cloud] < dragonEnemies){
+		document.getElementById('scoreDisplay').innerText = "Al drac ja no el derrotaràs, però al menys no hi haurà sequera. Va, suma "+dragonEnemies+" punts i passa el torn.";
+		return dragonEnemies;
+	}
+	
+	if(contadorArmes >= dragonEnemies) {
+		explicacio += " El drac està derrotat, donant "+dragonEnemies*2+" punts!.";
+		totalScore += dragonEnemies*2;
+		
+	}else {
+		document.getElementById('scoreDisplay').innerText = "Els drac no et deixa tenir punts! GRRRR!!! ";
+		return 0;
+	}
+	
+	if(contadorCor > 0){
+		totalScore += contadorCor*PUNTUACIO_CORS;
+		explicacio += " +"+contadorCor*PUNTUACIO_CORS+" pels cors."
+	}
+	if(parellsRosaLLibre > 0) {
+		totalScore += PUNTUACIO_ROSA_LLIBRE[parellsRosaLLibre];
+		explicacio += " "+parellsRosaLLibre+ " parells Rosa+LLibre que fan "+PUNTUACIO_ROSA_LLIBRE[parellsRosaLLibre]+".";
+	}
+	if(contador[rosa] >= 3) {
+		totalScore += PUNTUACIO_GRUPS[contador[rosa]];
+		explicacio += " "+contador[rosa]+ " roses, que fan: "+PUNTUACIO_GRUPS[contador[rosa]]+".";
+	}
+	if(contador[llibre] >= 3) {
+		totalScore += PUNTUACIO_GRUPS[contador[llibre]];
+		explicacio += " "+contador[llibre]+ " llibres, que fan: "+PUNTUACIO_GRUPS[contador[llibre]]+".";
+	}
+	if(contadorArmes >= 3) {
+		totalScore += PUNTUACIO_GRUPS[contadorArmes];
+		explicacio += " "+contadorArmes+ " armes, que fan: "+PUNTUACIO_GRUPS[contadorArmes]+".";
+	}
+	if(contador[cloud] >= 3){
+	}
+	
+	
+	text += " -> "+totalScore;
+	document.getElementById('scoreDisplay').innerText =/* text +"  "+*/totalScore+" -> "+explicacio;
+	
+	return totalScore;
+}
+
+
+var players = [];
+var scores = [];
+
+function updateScoreboard() {
+  var table = document.getElementById('scoreboard');
+  var rowCount = table.rows.length;
+  for (var i = rowCount - 1; i > 0; i--) {
+    table.deleteRow(i);
+  }
+
+  players.forEach(function(player, index) {
+    var row = table.insertRow(-1);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    cell1.innerHTML = player;
+    cell2.innerHTML = scores[index];
+  });
+}
+
+function newRound() {
+
+	document.getElementById('debug').innerText = "GRRRR!";
+	var table = document.getElementById('scoreboard');
+	if(players.length < 1){
+		document.getElementById('debug').innerText = "Afegeix jugadors!";
+		return;
+	}
+	if(scores[currentPlayerIndex] >= WIN_SCORE){
+	showPlayerWin(table.rows[1 + currentPlayerIndex].cells[0].innerText);
+		document.getElementById('debug').innerText = "Recarrega la pàgina per tornar a jugar! Aquesta ronda ja l'ha guanyat "+table.rows[1 + currentPlayerIndex].cells[0].innerText+".";
+		return;
+	}
+	scores[currentPlayerIndex] += WriteCount();
+	updateScoreboard()
+	if(scores[currentPlayerIndex] >= WIN_SCORE){
+	showPlayerWin(table.rows[1 + currentPlayerIndex].cells[0].innerText);
+		document.getElementById('debug').innerText = "Recarrega la pàgina per tornar a jugar! Aquesta ronda ja l'ha guanyat "+table.rows[1 + currentPlayerIndex].cells[0].innerText+".";
+		return;
+	}
+	currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+	highlightCurrentPlayer();
+	showPlayerTurn(table.rows[1 + currentPlayerIndex].cells[0].innerText);
+	document.getElementById('newRoundButton').innerText = "Acabar el torn";
+  
+}
+var currentPlayerIndex = 0;
+
+
+function addPlayer() {
+	var name = document.getElementById('playerNameInput').value;
+	if (name && !players.includes(name)) {
+		players.push(name);
+		scores.push(0);
+		updateScoreboard();
+		document.getElementById('playerNameInput').value = ''; 
+		if (players.length === 1) {
+			highlightCurrentPlayer();
+		}
+	} else {
+		alert('Posa un nom nou.');
+	}
+}
+
+function addPlayerRand() {
+	let noms = ["Jordi","Jordina","Virka","Jorgina","Jblat","Turdi","Elldi","Jplati","J" ]
+	var name;
+	if(players.length == 0){
+		name = "Jordi";
+	}
+	else if(players.length >= noms.length){
+		name = "GenericJordi"+Math.floor(Math.random()*9999);
+	}
+	else {
+		while (!name || players.includes(name)) {
+			const randomIndex = Math.floor(Math.random() * noms.length);   
+			name = noms[randomIndex];
+		}
+	}
+  
+	players.push(name);
+	scores.push(0);
+	updateScoreboard();
+	document.getElementById('playerNameInput').value = ''; 
+	if (players.length === 1) {
+	  highlightCurrentPlayer();
+	}
+
+}
+
+function updateScoreboard() {
+  var table = document.getElementById('scoreboard');
+  var rowCount = table.rows.length;
+  for (var i = rowCount - 1; i > 0; i--) {
+    table.deleteRow(i);
+  }
+
+  players.forEach(function(player, index) {
+    var row = table.insertRow(-1);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    cell1.innerHTML = player;
+    cell2.innerHTML = scores[index];
+  });
+  highlightCurrentPlayer(); 
+}
+
+function showPlayerTurn(name) {
+    var popup = document.getElementById('playerTurnPopup');
+    var playerNameSpan = document.getElementById('playerNameInPopup');
+    var closeButton = document.getElementsByClassName('close-button')[0];
+
+    playerNameSpan.textContent = name;
+    popup.style.display = "block"; 
+
+    closeButton.onclick = function() {
+        popup.style.display = "none";
+        onPopupClose(); 
+    };
+
+    window.onclick = function(event) {
+        if (event.target == popup) {
+            popup.style.display = "none";
+            onPopupClose();
+        }
+    };
+}
+
+function showPlayerWin(name) {
+    var popup = document.getElementById('WinPopup');
+    var playerNameSpan = document.getElementById('playerNameWin');
+    var closeButton = document.getElementsByClassName('close-button-win')[0];
+
+    playerNameSpan.textContent = name;
+    popup.style.display = "block"; 
+
+    closeButton.onclick = function() {
+        popup.style.display = "none";
+        onPopupClose(); 
+    };
+
+    window.onclick = function(event) {
+        if (event.target == popup) {
+            popup.style.display = "none";
+            onPopupClose();
+        }
+    };
+}
+
+function onPopupClose() {
+	
+	OnButtonRollAll();
+}
+
+
+function highlightCurrentPlayer() {
+    var table = document.getElementById('scoreboard');
+    var playerName = table.rows[1 + currentPlayerIndex].cells[0].innerText;
+    for (var i = 1; i < table.rows.length; i++) {
+        table.rows[i].classList.remove('highlight');
+    }
+    if (table.rows.length > 1 + currentPlayerIndex) {
+        table.rows[1 + currentPlayerIndex].classList.add('highlight');
+    }
+}
+
+
+window.onload = function() {
+  //document.getElementById('newRound').addEventListener('click', newRound);
+  //document.getElementById('addPlayer').addEventListener('click', addPlayer);
+};
+
+</script>
+
+</body>
+</html>
